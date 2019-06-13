@@ -29,14 +29,9 @@ variable "enable_logging" {
   description = "Enable logging for the trail"
 }
 
-variable "cloud_watch_logs_role_arn" {
-  description = "Specifies the role for the CloudWatch Logs endpoint to assume to write to a user’s log group"
-  default     = ""
-}
-
-variable "cloud_watch_logs_group_arn" {
-  description = "Specifies a log group name using an Amazon Resource Name (ARN), that represents the log group to which CloudTrail logs will be delivered"
-  default     = ""
+variable "enable_cloudwatchlogs" {
+  description = "Enable log delivery to CloudWatchLogs"
+  default     = "false"
 }
 
 variable "event_selector" {
@@ -50,7 +45,7 @@ variable "kms_key_id" {
   default     = ""
 }
 
-variable "versioning_enabled" {
+variable "enabled_versioning" {
   default     = true
   type        = "string"
   description = "Enable versioning. Versioning is a means of keeping multiple variants of an object in the same bucket."

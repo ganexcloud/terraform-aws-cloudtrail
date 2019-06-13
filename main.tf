@@ -5,8 +5,8 @@ resource "aws_cloudtrail" "default" {
   enable_log_file_validation    = "${var.enable_log_file_validation}"
   is_multi_region_trail         = "${var.is_multi_region_trail}"
   include_global_service_events = "${var.include_global_service_events}"
-  cloud_watch_logs_role_arn     = "${var.cloud_watch_logs_role_arn}"
-  cloud_watch_logs_group_arn    = "${var.cloud_watch_logs_group_arn}"
+  cloud_watch_logs_group_arn    = "${ join("", aws_cloudwatch_log_group.cloudtrail.*.arn) }"
+  cloud_watch_logs_role_arn     = "${ join("", aws_iam_role.cloudwatch_logs.*.arn) }"
   tags                          = "${var.tags}"
   event_selector                = "${var.event_selector}"
   kms_key_id                    = "${var.kms_key_id}"
@@ -17,7 +17,7 @@ resource "aws_s3_bucket" "default" {
   acl    = "private"
 
   versioning {
-    enabled = "${var.versioning_enabled}"
+    enabled = "${var.enabled_versioning}"
   }
 
   server_side_encryption_configuration {
@@ -82,4 +82,58 @@ data "aws_iam_policy_document" "default" {
       ]
     }
   }
+}
+
+data "aws_iam_policy_document" "cloudwatch_assume_role" {
+  count = "${var.enable_cloudwatchlogs == "true" ? 1 : 0}"
+
+  statement {
+    actions = [
+      "sts:AssumeRole",
+    ]
+
+    principals {
+      identifiers = [
+        "cloudtrail.amazonaws.com",
+      ]
+
+      type = "Service"
+    }
+  }
+}
+
+data "aws_iam_policy_document" "cloudwatch_logs_role" {
+  count = "${var.enable_cloudwatchlogs == "true" ? 1 : 0}"
+
+  statement {
+    actions = [
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+    ]
+
+    resources = [
+      "${aws_cloudwatch_log_group.cloudtrail.arn}",
+    ]
+
+    sid = "AWSCloudTrailLogging"
+  }
+}
+
+resource "aws_iam_role" "cloudwatch_logs" {
+  count              = "${var.enable_cloudwatchlogs == "true" ? 1 : 0}"
+  assume_role_policy = "${data.aws_iam_policy_document.cloudwatch_assume_role.json}"
+  name               = "CloudTrail_CloudWatchLogs_Role-${var.name}"
+}
+
+resource "aws_cloudwatch_log_group" "cloudtrail" {
+  count             = "${var.enable_cloudwatchlogs == "true" ? 1 : 0}"
+  name              = "CloudTrail/${var.name}"
+  retention_in_days = 30
+}
+
+resource "aws_iam_role_policy" "cloudwatch_logs" {
+  count  = "${var.enable_cloudwatchlogs == "true" ? 1 : 0}"
+  name   = "cloudwatch-logs"
+  policy = "${data.aws_iam_policy_document.cloudwatch_logs_role.json}"
+  role   = "${aws_iam_role.cloudwatch_logs.id}"
 }
