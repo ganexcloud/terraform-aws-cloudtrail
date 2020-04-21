@@ -46,7 +46,7 @@ variable "kms_key_id" {
 }
 
 variable "enabled_versioning" {
-  default     = true
+  default     = false
   type        = "string"
   description = "Enable versioning. Versioning is a means of keeping multiple variants of an object in the same bucket."
 }
