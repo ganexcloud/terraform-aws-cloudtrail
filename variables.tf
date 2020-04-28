@@ -1,41 +1,46 @@
 variable "name" {
   description = "Name"
-  type        = "string"
+  type        = string
 }
 
 variable "tags" {
-  type        = "map"
+  type        = map(string)
   default     = {}
   description = "Additional tags (e.g. map('BusinessUnit`,`XYZ`)"
 }
 
 variable "enable_log_file_validation" {
-  default     = "true"
+  default     = true
+  type        = bool
   description = "Specifies whether log file integrity validation is enabled. Creates signed digest for validated contents of logs"
 }
 
 variable "is_multi_region_trail" {
-  default     = "true"
+  default     = true
+  type        = bool
   description = "Specifies whether the trail is created in the current region or in all regions"
 }
 
 variable "include_global_service_events" {
-  default     = "true"
+  default     = true
+  type        = bool
   description = "Specifies whether the trail is publishing events from global services such as IAM to the log files"
 }
 
 variable "enable_logging" {
-  default     = "true"
+  default     = true
+  type        = bool
   description = "Enable logging for the trail"
 }
 
 variable "enable_cloudwatchlogs" {
   description = "Enable log delivery to CloudWatchLogs"
-  default     = "false"
+  type        = bool
+  default     = false
 }
 
 variable "event_selector" {
-  type        = "list"
+  type        = list(string)
   description = "Specifies an event selector for enabling data event logging, It needs to be a list of map values. See: https://www.terraform.io/docs/providers/aws/r/cloudtrail.html for details on this map variable"
   default     = []
 }
@@ -45,14 +50,8 @@ variable "kms_key_id" {
   default     = ""
 }
 
-variable "enabled_versioning" {
-  default     = false
-  type        = "string"
-  description = "Enable versioning. Versioning is a means of keeping multiple variants of an object in the same bucket."
-}
-
 variable "force_destroy" {
   default     = false
-  type        = "string"
+  type        = string
   description = "A boolean that indicates all objects should be deleted from the bucket so that the bucket can be destroyed without error."
 }
