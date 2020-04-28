@@ -7,7 +7,7 @@ data "aws_region" "default" {
 resource "aws_cloudtrail" "default" {
   name                          = var.name
   enable_logging                = var.enable_logging
-  s3_bucket_name                = var.name
+  s3_bucket_name                = aws_s3_bucket.default.id
   enable_log_file_validation    = var.enable_log_file_validation
   is_multi_region_trail         = var.is_multi_region_trail
   include_global_service_events = var.include_global_service_events
@@ -31,6 +31,7 @@ resource "aws_cloudtrail" "default" {
       }
     }
   }
+  depends_on = [aws_s3_bucket_policy.default]
 }
 
 resource "aws_s3_bucket" "default" {
@@ -126,7 +127,7 @@ data "aws_iam_policy_document" "cloudwatch_logs_role" {
       "logs:CreateLogStream",
       "logs:PutLogEvents",
     ]
-    resources = ["arn:aws:logs:${data.aws_region.default.name}:${data.aws_caller_identity.default.account_id}:log-group:CloudTrail/${var.name}:*"]
+    resources = ["${aws_cloudwatch_log_group.cloudtrail[0].arn}"]
 
     sid = "AWSCloudTrailLogging"
   }
