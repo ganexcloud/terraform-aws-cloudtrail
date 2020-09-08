@@ -1,57 +1,64 @@
 variable "name" {
-  description = "Name"
+  description = "(Required) Specifies the name of the trail."
   type        = string
 }
 
 variable "tags" {
+  description = "(Optional) A map of tags to assign to the trail"
   type        = map(string)
   default     = {}
-  description = "Additional tags (e.g. map('BusinessUnit`,`XYZ`)"
 }
 
 variable "enable_log_file_validation" {
-  default     = true
+  description = "(Optional) Specifies whether log file integrity validation is enabled."
   type        = bool
-  description = "Specifies whether log file integrity validation is enabled. Creates signed digest for validated contents of logs"
+  default     = true
 }
 
 variable "is_multi_region_trail" {
-  default     = true
+  description = "(Optional) Specifies whether the trail is created in the current region or in all regions."
   type        = bool
-  description = "Specifies whether the trail is created in the current region or in all regions"
+  default     = true
+}
+
+variable "is_organization_trail" {
+  description = "(Optional) Specifies whether the trail is an AWS Organizations trail. Organization trails log events for the master account and all member accounts. Can only be created in the organization master account. "
+  type        = bool
+  default     = true
 }
 
 variable "include_global_service_events" {
-  default     = true
+  description = "(Optional) Specifies whether the trail is publishing events from global services such as IAM to the log files. "
   type        = bool
-  description = "Specifies whether the trail is publishing events from global services such as IAM to the log files"
+  default     = true
 }
 
 variable "enable_logging" {
-  default     = true
+  description = "(Optional) Enables logging for the trail."
   type        = bool
-  description = "Enable logging for the trail"
+  default     = true
 }
 
 variable "enable_cloudwatchlogs" {
-  description = "Enable log delivery to CloudWatchLogs"
+  description = "(Required) Enable log delivery to CloudWatchLogs"
   type        = bool
   default     = false
 }
 
 variable "event_selector" {
+  description = "(Optional) Specifies an event selector for enabling data event logging. "
   type        = list(string)
-  description = "Specifies an event selector for enabling data event logging, It needs to be a list of map values. See: https://www.terraform.io/docs/providers/aws/r/cloudtrail.html for details on this map variable"
   default     = []
 }
 
 variable "kms_key_id" {
-  description = "Specifies the KMS key ARN to use to encrypt the logs delivered by CloudTrail"
-  default     = ""
+  description = "(Optional) Specifies the KMS key ARN to use to encrypt the logs delivered by CloudTrail."
+  type        = string
+  default     = null
 }
 
 variable "force_destroy" {
-  default     = false
-  type        = string
   description = "A boolean that indicates all objects should be deleted from the bucket so that the bucket can be destroyed without error."
+  type        = string
+  default     = false
 }

@@ -15,6 +15,7 @@ resource "aws_cloudtrail" "default" {
   cloud_watch_logs_role_arn     = join("", aws_iam_role.cloudwatch_logs.*.arn)
   tags                          = var.tags
   kms_key_id                    = var.kms_key_id
+  is_organization_trail         = var.is_organization_trail
 
   dynamic "event_selector" {
     for_each = var.event_selector
