@@ -11,7 +11,7 @@ resource "aws_cloudtrail" "default" {
   enable_log_file_validation    = var.enable_log_file_validation
   is_multi_region_trail         = var.is_multi_region_trail
   include_global_service_events = var.include_global_service_events
-  cloud_watch_logs_group_arn    = join("", aws_cloudwatch_log_group.cloudtrail.*.arn)
+  cloud_watch_logs_group_arn    = "${aws_cloudwatch_log_group.cloudtrail[0].arn}:*"
   cloud_watch_logs_role_arn     = join("", aws_iam_role.cloudwatch_logs.*.arn)
   tags                          = var.tags
   kms_key_id                    = var.kms_key_id
