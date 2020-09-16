@@ -24,7 +24,7 @@ variable "is_multi_region_trail" {
 variable "is_organization_trail" {
   description = "(Optional) Specifies whether the trail is an AWS Organizations trail. Organization trails log events for the master account and all member accounts. Can only be created in the organization master account. "
   type        = bool
-  default     = fakse
+  default     = false
 }
 
 variable "include_global_service_events" {
