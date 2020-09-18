@@ -7,12 +7,12 @@ data "aws_region" "default" {
 resource "aws_cloudtrail" "default" {
   name                          = var.name
   enable_logging                = var.enable_logging
-  s3_bucket_name                = aws_s3_bucket.default.id
+  s3_bucket_name                = var.create_s3_bucket ? aws_s3_bucket.default[0].id : var.s3_bucket_name
   enable_log_file_validation    = var.enable_log_file_validation
   is_multi_region_trail         = var.is_multi_region_trail
   include_global_service_events = var.include_global_service_events
-  cloud_watch_logs_group_arn    = "${aws_cloudwatch_log_group.cloudtrail[0].arn}:*"
-  cloud_watch_logs_role_arn     = join("", aws_iam_role.cloudwatch_logs.*.arn)
+  cloud_watch_logs_group_arn    = var.enable_cloudwatchlogs ? "${aws_cloudwatch_log_group.cloudtrail[0].arn}:*" : null
+  cloud_watch_logs_role_arn     = var.enable_cloudwatchlogs ? join("", aws_iam_role.cloudwatch_logs.*.arn) : null
   tags                          = var.tags
   kms_key_id                    = var.kms_key_id
   is_organization_trail         = var.is_organization_trail
@@ -32,10 +32,10 @@ resource "aws_cloudtrail" "default" {
       }
     }
   }
-  depends_on = [aws_s3_bucket_policy.default]
 }
 
 resource "aws_s3_bucket" "default" {
+  count         = var.create_s3_bucket == true ? 1 : 0
   bucket        = var.name
   acl           = "log-delivery-write"
   force_destroy = var.force_destroy
@@ -50,7 +50,8 @@ resource "aws_s3_bucket" "default" {
 }
 
 resource "aws_s3_bucket_policy" "default" {
-  bucket = aws_s3_bucket.default.id
+  count  = var.create_s3_bucket == true ? 1 : 0
+  bucket = aws_s3_bucket.default[0].id
   policy = data.aws_iam_policy_document.default.json
 }
 
@@ -143,7 +144,7 @@ resource "aws_iam_role" "cloudwatch_logs" {
 resource "aws_cloudwatch_log_group" "cloudtrail" {
   count             = var.enable_cloudwatchlogs == true ? 1 : 0
   name              = "CloudTrail/${var.name}"
-  retention_in_days = 30
+  retention_in_days = var.log_retention_days
 }
 
 resource "aws_iam_role_policy" "cloudwatch_logs" {
@@ -151,4 +152,31 @@ resource "aws_iam_role_policy" "cloudwatch_logs" {
   name   = "cloudwatch-logs"
   policy = data.aws_iam_policy_document.cloudwatch_logs_role[0].json
   role   = aws_iam_role.cloudwatch_logs[0].id
+}
+
+resource "aws_iam_role_policy" "cloudwatch_logs_organizations" {
+  count  = var.enable_cloudwatchlogs == true && var.is_organization_trail == true ? 1 : 0
+  name   = "cloudwatch-logs-organizations"
+  policy = data.aws_iam_policy_document.cloudwatch_logs_role_organizations[0].json
+  role   = aws_iam_role.cloudwatch_logs[0].id
+}
+
+data "aws_iam_policy_document" "cloudwatch_logs_role_organizations" {
+  count = var.enable_cloudwatchlogs == true && var.is_organization_trail == true ? 1 : 0
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "logs:CreateLogStream"
+    ]
+    resources = ["${aws_cloudwatch_log_group.cloudtrail[0].arn}:log-stream:*"]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "logs:PutLogEvents"
+    ]
+    resources = ["${aws_cloudwatch_log_group.cloudtrail[0].arn}:log-stream:*"]
+  }
 }

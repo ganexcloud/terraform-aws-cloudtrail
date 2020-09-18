@@ -45,6 +45,12 @@ variable "enable_cloudwatchlogs" {
   default     = false
 }
 
+variable "log_retention_days" {
+  description = "Number of days to keep AWS logs around in specific log group on CloudwatchLogs."
+  type        = string
+  default     = 30
+}
+
 variable "event_selector" {
   description = "(Optional) Specifies an event selector for enabling data event logging. "
   type        = list(string)
@@ -61,4 +67,16 @@ variable "force_destroy" {
   description = "A boolean that indicates all objects should be deleted from the bucket so that the bucket can be destroyed without error."
   type        = string
   default     = false
+}
+
+variable "create_s3_bucket" {
+  description = "(Optional) Automatically create the s3 bucket to cloudtrail."
+  type        = bool
+  default     = true
+}
+
+variable "s3_bucket_name" {
+  description = "(Optional) Required if create_s3_bucket is false, the name of S3 bucket."
+  type        = string
+  default     = null
 }
