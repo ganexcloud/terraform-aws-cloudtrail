@@ -129,7 +129,7 @@ data "aws_iam_policy_document" "cloudwatch_logs_role" {
       "logs:CreateLogStream",
       "logs:PutLogEvents",
     ]
-    resources = ["${aws_cloudwatch_log_group.cloudtrail[0].arn}"]
+    resources = ["${aws_cloudwatch_log_group.cloudtrail[0].arn}:log-stream:*"]
 
     sid = "AWSCloudTrailLogging"
   }
