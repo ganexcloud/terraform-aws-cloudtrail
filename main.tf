@@ -1,8 +1,5 @@
-data "aws_caller_identity" "default" {
-}
-
-data "aws_region" "default" {
-}
+data "aws_caller_identity" "default" {}
+data "aws_region" "default" {}
 
 resource "aws_cloudtrail" "default" {
   name                          = var.name
@@ -145,6 +142,7 @@ resource "aws_cloudwatch_log_group" "cloudtrail" {
   count             = var.enable_cloudwatchlogs == true ? 1 : 0
   name              = "CloudTrail/${var.name}"
   retention_in_days = var.log_retention_days
+  tags              = var.tags
 }
 
 resource "aws_iam_role_policy" "cloudwatch_logs" {
