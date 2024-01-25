@@ -49,7 +49,7 @@ resource "aws_s3_bucket" "default" {
 
 resource "aws_s3_bucket_public_access_block" "default" {
   count                   = var.create_s3_bucket == true ? 1 : 0
-  bucket                  = aws_s3_bucket.default.id
+  bucket                  = aws_s3_bucket.default[0].id
   block_public_acls       = var.s3_block_public_acls
   block_public_policy     = var.s3_block_public_policy
   ignore_public_acls      = var.s3_ignore_public_acls
