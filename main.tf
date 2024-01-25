@@ -32,11 +32,15 @@ resource "aws_cloudtrail" "default" {
 }
 
 resource "aws_s3_bucket" "default" {
-  count         = var.create_s3_bucket == true ? 1 : 0
-  bucket        = var.name
-  acl           = "log-delivery-write"
-  force_destroy = var.force_destroy
-  tags          = var.tags
+  count                   = var.create_s3_bucket == true ? 1 : 0
+  bucket                  = var.name
+  acl                     = "log-delivery-write"
+  force_destroy           = var.force_destroy
+  tags                    = var.tags
+  block_public_acls       = var.s3_block_public_acls
+  block_public_policy     = var.s3_block_public_policy
+  ignore_public_acls      = var.s3_ignore_public_acls
+  restrict_public_buckets = var.s3_restrict_public_buckets
   server_side_encryption_configuration {
     rule {
       apply_server_side_encryption_by_default {
