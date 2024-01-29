@@ -121,9 +121,22 @@ data "aws_iam_policy_document" "cloudwatch_assume_role" {
       identifiers = [
         "cloudtrail.amazonaws.com",
       ]
-
       type = "Service"
     }
+
+    condition {
+      test     = "ArnLike"
+      variable = "aws:SourceArn"
+      values   = ["arn:aws:trail:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:trail/${var.name}"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = [data.aws_caller_identity.current.account_id]
+    }
+
+
   }
 }
 
