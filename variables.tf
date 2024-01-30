@@ -48,7 +48,7 @@ variable "enable_cloudwatchlogs" {
 variable "log_retention_days" {
   description = "Number of days to keep AWS logs around in specific log group on CloudwatchLogs."
   type        = string
-  default     = 30
+  default     = 180
 }
 
 variable "event_selector" {
