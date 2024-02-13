@@ -32,9 +32,9 @@ resource "aws_cloudtrail" "default" {
 }
 
 resource "aws_s3_bucket" "default" {
-  count         = var.create_s3_bucket == true ? 1 : 0
-  bucket        = var.name
-  acl           = "log-delivery-write"
+  count  = var.create_s3_bucket == true ? 1 : 0
+  bucket = var.name
+  #acl           = "log-delivery-write"
   force_destroy = var.force_destroy
   tags          = var.tags
 
@@ -45,6 +45,19 @@ resource "aws_s3_bucket" "default" {
       }
     }
   }
+}
+
+resource "aws_s3_bucket_ownership_controls" "default" {
+  bucket = aws_s3_bucket.default[0].id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
+resource "aws_s3_bucket_acl" "default" {
+  bucket     = aws_s3_bucket.default[0].id
+  acl        = "log-delivery-write"
+  depends_on = [aws_s3_bucket_ownership_controls.default]
 }
 
 resource "aws_s3_bucket_public_access_block" "default" {
