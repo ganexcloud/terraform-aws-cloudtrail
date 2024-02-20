@@ -48,6 +48,7 @@ resource "aws_s3_bucket" "default" {
 }
 
 resource "aws_s3_bucket_ownership_controls" "default" {
+  count  = var.create_s3_bucket == true ? 1 : 0
   bucket = aws_s3_bucket.default[0].id
   rule {
     object_ownership = "BucketOwnerPreferred"
@@ -55,6 +56,7 @@ resource "aws_s3_bucket_ownership_controls" "default" {
 }
 
 resource "aws_s3_bucket_acl" "default" {
+  count      = var.create_s3_bucket == true ? 1 : 0
   bucket     = aws_s3_bucket.default[0].id
   acl        = "log-delivery-write"
   depends_on = [aws_s3_bucket_ownership_controls.default]
