@@ -52,9 +52,16 @@ variable "log_retention_days" {
 }
 
 variable "event_selector" {
-  description = "(Optional) Specifies an event selector for enabling data event logging. "
-  type        = list(string)
-  default     = []
+  description = "(Optional) Specifies an event selector for enabling data event logging."
+  type = list(object({
+    include_management_events = bool
+    read_write_type           = string
+    data_resource = object({
+      type   = string
+      values = list(string)
+    })
+  }))
+  default = []
 }
 
 variable "kms_key_id" {
