@@ -20,15 +20,13 @@ resource "aws_cloudtrail" "default" {
       include_management_events = lookup(event_selector.value, "include_management_events", null)
       read_write_type           = lookup(event_selector.value, "read_write_type", null)
 
-      dynamic "data_resource" {
-        for_each = lookup(event_selector.value, "data_resource", [])
-        content {
-          type   = data_resource.value.type
-          values = data_resource.value.values
-        }
+      data_resource {
+        type   = event_selector.value.data_resource.type
+        values = event_selector.value.data_resource.values
       }
     }
   }
+
 }
 
 resource "aws_s3_bucket" "default" {
