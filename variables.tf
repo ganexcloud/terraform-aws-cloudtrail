@@ -112,3 +112,9 @@ variable "s3_restrict_public_buckets" {
   type        = bool
   default     = true
 }
+
+variable "s3_lifecycle_expiration_days" {
+  description = "Days until the items in the bucket expire."
+  type        = number
+  default     = 1825
+}
