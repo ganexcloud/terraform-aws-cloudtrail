@@ -218,7 +218,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "logs" {
   bucket = aws_s3_bucket.default[0].id
 
   rule {
-    id     = "cloudtrail-logs-expiration"
+    id     = "cloudtrail-audit-log-retention"
     status = "Enabled"
 
     filter {
