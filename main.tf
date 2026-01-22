@@ -212,3 +212,22 @@ data "aws_iam_policy_document" "cloudwatch_logs_role_organizations" {
     resources = ["${aws_cloudwatch_log_group.cloudtrail[0].arn}:log-stream:*"]
   }
 }
+
+resource "aws_s3_bucket_lifecycle_configuration" "logs" {
+  count  = var.create_s3_bucket == true ? 1 : 0
+  bucket = aws_s3_bucket.default[0].id
+
+  rule {
+    id     = "cloudtrail-audit-log-retention"
+    status = "Enabled"
+
+    filter {
+      prefix = "AWSLogs/"
+    }
+
+    expiration {
+      days = var.s3_lifecycle_expiration_days
+    }
+  }
+}
+
