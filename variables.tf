@@ -4,7 +4,7 @@ variable "name" {
 }
 
 variable "tags" {
-  description = "(Optional) A map of tags to assign to the trail"
+  description = "(Optional) A map of tags to assign to the trail."
   type        = map(string)
   default     = {}
 }
@@ -22,13 +22,13 @@ variable "is_multi_region_trail" {
 }
 
 variable "is_organization_trail" {
-  description = "(Optional) Specifies whether the trail is an AWS Organizations trail. Organization trails log events for the master account and all member accounts. Can only be created in the organization master account. "
+  description = "(Optional) Specifies whether the trail is an AWS Organizations trail."
   type        = bool
   default     = false
 }
 
 variable "include_global_service_events" {
-  description = "(Optional) Specifies whether the trail is publishing events from global services such as IAM to the log files. "
+  description = "(Optional) Specifies whether the trail publishes events from global services."
   type        = bool
   default     = true
 }
@@ -40,19 +40,19 @@ variable "enable_logging" {
 }
 
 variable "enable_cloudwatchlogs" {
-  description = "(Required) Enable log delivery to CloudWatchLogs"
+  description = "(Required) Enables log delivery to CloudWatch Logs."
   type        = bool
   default     = false
 }
 
 variable "log_retention_days" {
-  description = "Number of days to keep AWS logs around in specific log group on CloudwatchLogs."
+  description = "Number of days to keep AWS logs in the CloudWatch Logs group."
   type        = string
   default     = 180
 }
 
 variable "event_selector" {
-  description = "(Optional) Specifies an event selector for enabling data event logging."
+  description = "(Optional) Specifies event selectors for enabling data event logging."
   type = list(object({
     include_management_events = bool
     read_write_type           = string
@@ -65,29 +65,28 @@ variable "event_selector" {
 }
 
 variable "kms_key_id" {
-  description = "(Optional) Specifies the KMS key ARN to use to encrypt the logs delivered by CloudTrail."
+  description = "(Optional) Specifies the KMS key ARN used to encrypt CloudTrail logs."
   type        = string
   default     = null
 }
 
 variable "force_destroy" {
-  description = "A boolean that indicates all objects should be deleted from the bucket so that the bucket can be destroyed without error."
+  description = "A boolean indicating whether all objects can be deleted when destroying the bucket."
   type        = string
   default     = false
 }
 
 variable "create_s3_bucket" {
-  description = "(Optional) Automatically create the s3 bucket to cloudtrail."
+  description = "(Optional) Automatically creates the S3 bucket for CloudTrail."
   type        = bool
   default     = true
 }
 
 variable "s3_bucket_name" {
-  description = "(Optional) Required if create_s3_bucket is false, the name of S3 bucket."
+  description = "(Optional) Required when create_s3_bucket is false, the existing S3 bucket name."
   type        = string
   default     = null
 }
-
 
 variable "s3_block_public_acls" {
   description = "Whether Amazon S3 should block public ACLs for this bucket."
@@ -114,7 +113,7 @@ variable "s3_restrict_public_buckets" {
 }
 
 variable "s3_lifecycle_expiration_days" {
-  description = "Days until the items in the bucket expire."
+  description = "Days until objects in the bucket expire."
   type        = number
   default     = 1825
 }
